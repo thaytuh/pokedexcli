@@ -55,5 +55,6 @@ func (c *Cache) reapLoop(interval time.Duration) {
 				delete(c.cache, key)
 			}
 		}
+		c.mux.Unlock()
 	}
 }

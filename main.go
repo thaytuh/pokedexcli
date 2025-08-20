@@ -1,11 +1,15 @@
 package main
 
-type config struct {
-	nextLocationsURL *string
-	prevLocationsURL *string
-}
+import (
+	"time"
+
+	"github.com/thaytuh/pokedexcli/internal/pokeapi"
+)
 
 func main() {
-	cfg := new(config)
+	pokeClient := pokeapi.NewClient(5 * time.Second)
+	cfg := &config{
+		pokeapiClient: pokeClient,
+	}
 	startRepl(cfg)
 }

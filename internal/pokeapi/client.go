@@ -1,26 +1,22 @@
 package pokeapi
 
 import (
-	"io"
 	"net/http"
-	"fmt"
+	"time"
+
+	"github.com/thaytuh/pokedexcli/internal/pokecache"
 )
 
-func FetchResource(url string) ([]byte, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
+type Client struct {
+	httpClient			*http.Client
+	locationCache		pokecache.Cache
+}
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
+func NewClient(timeout time.Duration) Client {
+	return Client{
+		httpClient: &http.Client{
+			Timeout: timeout,
+		},
+		locationCache: pokecache.NewCache(5 * time.Second),
 	}
-
-	if res.StatusCode > 299 {
-		return nil, fmt.Errorf("response failed with status code: %d and body: %s", res.StatusCode, body)
-	}
-
-	return body, nil
 }
