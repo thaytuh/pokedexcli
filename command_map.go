@@ -1,26 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
+	"github.com/thaytuh/pokedexcli/internal/pokeapi"
 )
 
 
 func commandMap(cfg *config) error {
-	type Location struct {
-		Count 		int		 `json:"count"`
-		Next 		string	 `json:"next"`
-		Previous 	any 	 `json:"previous"`
-		Results []struct {
-			Name 	string	`json:"name"`
-			URL 	string	`json:"url"`
-		} `json:"results"`
-	}
-
-	location := Location{}
+	location := pokeapi.Location{}
 	
 	var url string
 	if cfg.nextLocationsURL == nil {
@@ -29,22 +16,9 @@ func commandMap(cfg *config) error {
 		url = *cfg.nextLocationsURL
 	}
 
-	res, err := http.Get(url)
+	location, err := pokeapi.GetLocation(url)
 	if err != nil {
-		log.Fatal(err)
-	}
-	body, err := io.ReadAll(res.Body)
-	defer res.Body.Close()
-	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err2 := json.Unmarshal(body, &location)
-	if err2 != nil {
-		fmt.Println(location)
+		return err
 	}
 
 	for _, result := range location.Results {
@@ -67,40 +41,18 @@ func commandMap(cfg *config) error {
 
 
 func commandMapB(cfg *config) error {
-	type Location struct {
-		Count 		int		 `json:"count"`
-		Next 		string	 `json:"next"`
-		Previous 	any 	 `json:"previous"`
-		Results []struct {
-			Name 	string	`json:"name"`
-			URL 	string	`json:"url"`
-		} `json:"results"`
-	}
 
-	location := Location{}
-	
 	var url string
 	if cfg.prevLocationsURL == nil {
 		fmt.Printf("You're on the first page\n")
 	} else {
+		location := pokeapi.Location{}
+
 		url = *cfg.prevLocationsURL
 		
-		res, err := http.Get(url)
+		location, err := pokeapi.GetLocation(url)
 		if err != nil {
-			log.Fatal(err)
-		}
-		body, err := io.ReadAll(res.Body)
-		defer res.Body.Close()
-		if res.StatusCode > 299 {
-			log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		err2 := json.Unmarshal(body, &location)
-		if err2 != nil {
-			fmt.Println(location)
+			return err
 		}
 
 		for _, result := range location.Results {
