@@ -6,8 +6,8 @@ import (
 )
 
 
-func commandMap(cfg *config) error {
-	location, err := cfg.pokeapiClient.GetLocation(cfg.nextLocationsURL)
+func commandMap(cfg *config, params ...string) error {
+	location, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
 	if err != nil {
 		return err
 	}
@@ -22,13 +22,13 @@ func commandMap(cfg *config) error {
 }
 
 
-func commandMapB(cfg *config) error {
+func commandMapB(cfg *config, params ...string) error {
 
 	if cfg.prevLocationsURL == nil {
 		return errors.New("you're on the first page")
 	}
 
-	location, err := cfg.pokeapiClient.GetLocation(cfg.prevLocationsURL)
+	location, err := cfg.pokeapiClient.ListLocations(cfg.prevLocationsURL)
 	if err != nil {
 		return err
 	}
