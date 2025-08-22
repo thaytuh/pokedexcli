@@ -15,7 +15,7 @@ func commandCatch(cfg *config, params ...string) error {
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
 
 	attemptCatch := func(exp int64) bool {
-		catchChance := math.Exp(-float64(exp) / 200.0)
+		catchChance := math.Exp(-float64(exp) / 250.0)
 		return rand.Float64() < catchChance
 	}
 
